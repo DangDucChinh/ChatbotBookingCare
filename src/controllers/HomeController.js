@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+import request from 'request';
 // process.env.NAME_VARIABLE
 
 let getHomePage = (req, res) => {
