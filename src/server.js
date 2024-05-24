@@ -1,14 +1,16 @@
-import express from "express";
-import bodyParser from "body-parser";
-import viewEngine from "./configs/viewEngine";
-import webRoutes from "./routes/web";
+const express = require('express');
+const bodyParser = require("body-parser");
+const viewEngine = require("./configs/viewEngine");
+const webRoutes = require("./routes/web");
 
 let app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 //config viewEngine
 viewEngine(app);
 webRoutes(app);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
+
 
 
 let port = process.env.PORT || 8080;
