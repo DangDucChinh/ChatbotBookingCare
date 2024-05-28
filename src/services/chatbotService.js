@@ -47,7 +47,8 @@ let handleGetStarted = (sender_psid) => {
         try {
             let username = await getUserName(sender_psid);
             let response = { "text": `OK , xin chào mừng bạn ${username} đến với chatbot của chúng tôi` };
-            await callSendAPI(sender_psid, response);
+            await callSendAPI(sender_psid, response);   
+            // ok
             resolve('done');
         } catch (error) {
             reject(error);
