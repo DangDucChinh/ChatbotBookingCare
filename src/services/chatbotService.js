@@ -1,5 +1,4 @@
 require('dotenv').config();
-import { response } from "express";
 import request from "request";
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 let callSendAPI = (sender_psid, response) => {
@@ -27,7 +26,6 @@ let callSendAPI = (sender_psid, response) => {
 }
 
 let getUserName = (sender_psid) => {
-    // Send the HTTP request to the Messenger Platform
     return new Promise((resolve, reject) => {
         request({
             "uri": `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic&access_token=${PAGE_ACCESS_TOKEN}`,
@@ -35,7 +33,7 @@ let getUserName = (sender_psid) => {
         }, (err, res, body) => {
             if (!err) {
                 body = JSON.parse(body);
-                username = `${body.last_name} ${body.first_name}`;
+                let username = `${body.last_name} ${body.first_name}`;
                 resolve(username);
             } else {
                 console.error("Unable to send message:" + err);
@@ -50,13 +48,11 @@ let handleGetStarted = (sender_psid) => {
             let username = await getUserName(sender_psid);
             let response = { "text": `OK , xin chào mừng bạn ${username} đến với chatbot của chúng tôi` };
             await callSendAPI(sender_psid, response);   
-            // ok
             resolve('done');
         } catch (error) {
             reject(error);
         }
     })
-    response = { "text": "Hello, welcome to Chatbot" }
 }
 
 module.exports = {
