@@ -1,7 +1,7 @@
 require('dotenv').config();
 import request from "request";
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-import chatbotService from '../controllers/chatbotService';
+import chatbotService from '../services/chatbotService';
 
 //process.env.NAME_VARIABLES
 let getHomePage = (req, res) => {
