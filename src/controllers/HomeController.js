@@ -131,6 +131,8 @@ async function handlePostback(sender_psid, received_postback) {
     case 'no':
       response = { "text": "Oops, try sending another image." }
       break;
+
+    case 'RESTART_BOT':
     case 'GET_STARTED':
       await chatbotService.handleGetStarted(sender_psid);
       break;
@@ -192,9 +194,59 @@ let setupProfile = async (req, res) => {
   return res.send('OK');
 }
 
+
+let setupPersistentMenu = async (req, res) => {
+  // Construct the message body
+  let request_body = {
+    "persistent_menu": [
+      {
+        "locale": "default",
+        "composer_input_disabled": false,
+        "call_to_actions": [
+          {
+            "type": "web_url",
+            "title": "Youtube của chúng tôi",
+            "url": "https://www.youtube.com/watch?v=lVWIAe4jjX0&list=RDlVWIAe4jjX0&start_radio=1",
+            "webview_height_ratio": "full"
+          },
+          {
+            "type": "web_url",
+            "title": "Fanpage của chúng tôi",
+            "url": "https://www.facebook.com/profile.php?id=100084068971386",
+            "webview_height_ratio": "full"
+          },
+          {
+            "type": "postback",
+            "title": "Khởi động lại bot",
+            "payload": "RESTART_BOT"
+          }
+        ]
+      }
+    ]
+  }
+
+  // Send the HTTP request to the Messenger Platform
+  await request({
+    "uri": `https://graph.facebook.com/v18.0/me/messenger_profile?access_token=${process.env.PAGE_ACCESS_TOKEN}`,
+    "qs": { "access_token": PAGE_ACCESS_TOKEN },
+    "method": "POST",
+    "json": request_body
+  }, (err, res, body) => {
+    console.log(body);
+    if (!err) {
+      console.log('Setup persistent success!');
+    } else {
+      console.error("Unable to send message with error:" + err);
+    }
+  });
+
+  return res.send('Setup persistent success!');
+}
+
 module.exports = {
   getHomePage: getHomePage,
   postWebhook: postWebhook,
   getWebhook: getWebhook,
-  setupProfile: setupProfile
+  setupProfile: setupProfile,
+  setupPersistentMenu: setupPersistentMenu
 }
