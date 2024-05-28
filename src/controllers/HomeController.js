@@ -1,6 +1,7 @@
 require('dotenv').config();
 import request from "request";
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN; 
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+import chatbotService from '../controllers/chatbotService';
 
 //process.env.NAME_VARIABLES
 let getHomePage = (req, res) => {
@@ -115,21 +116,31 @@ function handleMessage(sender_psid, received_message) {
   callSendAPI(sender_psid, response);
 }
 
-// Handles messaging_postbacks events
-function handlePostback(sender_psid, received_postback) {
+// Handles messaging_postbacks events 
+
+async function handlePostback(sender_psid, received_postback) {
   let response;
 
   // Get the payload for the postback
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
-  if (payload === 'yes') {
-    response = { "text": "Thanks!" }
-  } else if (payload === 'no') {
-    response = { "text": "Oops, try sending another image." }
+  switch (payload) {
+    case 'yes':
+      response = { "text": "Thanks!" }
+      break;
+    case 'no':
+      response = { "text": "Oops, try sending another image." }
+      break;
+    case 'GET_STARTED':
+      await chatbotService.handleGetStarted(sender_psid);
+      break;
+    default:
+      response = { "text": `Opp!, i dont know response postback ${payload}` }
   }
+
   // Send the message to acknowledge the postback
-  callSendAPI(sender_psid, response);
+  // callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
@@ -157,11 +168,11 @@ function callSendAPI(sender_psid, response) {
   });
 }
 
-let setupProfile = async(req, res)=>{
+let setupProfile = async (req, res) => {
   console.log('wait');
   // Construct the message body
   let request_body = {
-    "get_started": { "payload":"GET_STARTED"},
+    "get_started": { "payload": "GET_STARTED" },
     "whitelisted_domains": ["https://chatbot-bookingcare.onrender.com/"]
   }
   // Send the HTTP request to the Messenger Platform
